@@ -1,0 +1,6 @@
+.bg-image {
+  background-image: url('/Tapa.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 100vh; /* Establece la altura del contenedor para ocupar toda la pantalla */
+}

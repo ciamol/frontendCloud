@@ -1,0 +1,16 @@
+.bg-image {
+  background-image: url('../public/TAPA.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh; /* Establece la altura del contenedor para ocupar toda la pantalla */
+}
+.cursor-pointer {
+  cursor: pointer;
+}
+.list-category>li{
+  cursor:pointer;
+  padding: 5px;
+  font-weight: bold;
+  background-color: #ff8181;
+}

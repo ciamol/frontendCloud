@@ -3,7 +3,7 @@ import { Input } from "../components/Input";
 import { Button } from "react-bootstrap";
 import { FaFileImage } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-const FormUpload = ({ handleClose }) => {
+const FormUpload = ({ handleClose, listCategory  }) => {
   const inputFileRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [typeFile, setTypeFile] = useState('');
@@ -48,7 +48,9 @@ const FormUpload = ({ handleClose }) => {
           <label htmlFor="journalist">PERIODISTA:</label>
           <select name="journalist" className="form-select form-select-sm" onChange={(e)=>setJournalist(e.target.value)} value={journalist}>
             <option value="">Seleccione al periodista...</option>
-            <option value="VICTOR">VICTOR</option>
+            {Object.keys(listCategory).map((key) => (
+              <option value={listCategory[key].name} key={key} >{listCategory[key].name}</option>
+            ))} 
           </select>
         </div>
       </div>

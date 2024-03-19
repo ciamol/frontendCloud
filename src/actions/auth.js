@@ -1,5 +1,4 @@
 import { fetchNoToken,fetchToken } from "../helpers/fetch";
-import { addUser } from "../redux/userSlice";
 const login = async (data) => {
   const response = await fetchNoToken("api/auth/", data, "POST");
   const body = await response.json();

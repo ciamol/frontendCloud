@@ -2,7 +2,6 @@ import NavBar from "../components/Navbar";
 import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import Options from "../components/Options";
-// import CardVideo from "../components/CardVideo";
 import ModalShow from "../components/Modal";
 import { Button } from "react-bootstrap";
 import { FaCloudDownloadAlt } from "react-icons/fa";
@@ -10,11 +9,10 @@ import { useEffect, useState } from "react";
 import FormsCategory from "../forms/FormsCategory";
 import FormUpload from "../forms/FormUpload";
 import { useDispatch, useSelector } from "react-redux";
-import { getContentCategory } from "../actions/category";
 import { getAllCity } from "../actions/city";
 import { getFile, downloadFile } from "../actions/file";
 import VideoTable from "../tables/VideoTable";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import { getAllJournalist } from "../actions/journalist";
 import { filter } from "../redux/filterSlice";
 const Home = () => {
@@ -25,13 +23,11 @@ const Home = () => {
   const { dateNow, city } = useSelector((state) => state.filter);
   const [listCategory, setListCategory] = useState([]);
   const [listCity, setListCity] = useState([]);
-  const [listFile, setListFile] = useState([]);
   const [fileContent, setFileContent] = useState("");
   const [fileInfo, setFileInfo] = useState({
     urlFile: "",
     titleFile: "",
   });
-
   const dispatch = useDispatch();
   const handleShowSideBar = () => {
     setDisplaySideBar(!displaySideBar);
@@ -84,18 +80,21 @@ const Home = () => {
   const handleDownload = (e) => {
     const urlFile = e.target.closest("button").getAttribute("data-url");
     window.open(urlFile);
-  };
-
-  useEffect(() => {
-    // getAllCategory()
+  };  
+  const loadJournaList = async() => {
+    try{
+      const response = await getAllJournalist()
+      setListCategory(response);
+    }catch(error)
+    {
+      console.log(error);
+    }
+  }
+  useEffect(() => {        
     getAllCity()
       .then((result) => setListCity(result))
       .catch((error) => console.log(error));
-    getAllJournalist()
-      .then((response) => {
-        setListCategory(response);
-      })
-      .catch((error) => console.log(error));
+    loadJournaList();
   }, []);
 
   return (
@@ -107,7 +106,7 @@ const Home = () => {
           show={show}
           handleClose={handleClose}
         >
-          <FormsCategory handleClose={handleClose} />
+          <FormsCategory handleClose={handleClose} loadJournaList={loadJournaList}/>
         </ModalShow>
       )}
       {rol === 1 && (
@@ -116,7 +115,7 @@ const Home = () => {
           show={showUpload}
           handleClose={handleClose}
         >
-          <FormUpload listCategory={listCategory} handleClose={handleClose} />
+          <FormUpload listCategory={listCategory} listCity={listCity} handleClose={handleClose} />
         </ModalShow>
       )}
       <NavBar

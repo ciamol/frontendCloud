@@ -5,16 +5,15 @@ import { Button } from "react-bootstrap";
 import { getAllFile } from "../actions/file";
 import { useSelector } from "react-redux";
 import FormSearch from "../forms/FormSearch";
+import { toast } from "react-toastify";
 const VideoTable = ({city,handleContentFile}) => {
   const [dataTable, setDataTable] = useState([]);  
   const filter  = useSelector((state) => state.filter);
   const [search, setSearch] = useState("");
   useEffect(()=>{  
-    // console.log(filter)
     getAllFile(filter)
-    .then((response) => setDataTable(response))
-    .catch((error) => console.log(error));
-    
+    .then((response) => {response.ok? setDataTable(response.files):toast.error(response.msg)})
+    .catch((error) => console.log(error));    
   },[filter])
   const filteredData = dataTable.filter((video) =>
   video.nombre.toLowerCase().includes(search.toLowerCase())
@@ -44,9 +43,10 @@ const VideoTable = ({city,handleContentFile}) => {
           <tr>
             <th>NRO</th>
             <th>NOMBRE</th>
-            <th>DESCRIPCION</th>
             <th>PERIODISTA</th>
+            <th>CIUDAD</th>
             <th>TIPO</th>
+            <th>FECHA ELABORACION</th>
             <th>DESCARGAR</th>
           </tr>
         </thead>
@@ -56,9 +56,10 @@ const VideoTable = ({city,handleContentFile}) => {
             >
               <td>{index+1}</td>
               <td>{video.nombre}</td>
-              <td>{video.descripcion}</td>
               <td>{video.nom_periodista}</td>
+              <td>{video.nom_ciudad}</td>
               <td>{video.nom_tipo}</td>
+              <td>{video.fecha_elaboracion? video.fecha_elaboracion.split('T')[0]:'' }</td>
               <td>
                 <Button variant="outline-success" size="sm" className="w-100"
                  id="download"

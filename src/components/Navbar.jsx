@@ -26,11 +26,6 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
                     <GiHamburgerMenu size={20}/>
                 </Button>
             </div>
-            {/* <div className="d-flex " style={{width:"40%"}}>
-                <FormSearch 
-                city={city}
-                />
-            </div> */}
             <div className="d-flex gap-4 fw-bold align-items-center">
                 {rol===1 && <Button
                     onClick={handleShow}

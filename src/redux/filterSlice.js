@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-// no se puede guardar funciones ya que puede que no se serializable que no se puede usar en otros componentes
 const initialState ={
     dateNow: new Date().toISOString().split('T')[0],
     city:'0',

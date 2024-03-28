@@ -3,44 +3,56 @@ import { Input } from "../components/Input";
 import { Button } from "react-bootstrap";
 import { FaFileImage } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-const FormUpload = ({ handleClose, listCategory,city  }) => {
+import { toast } from "react-toastify";
+import { addFile } from "../actions/file";
+const FormUpload = ({ handleClose, listCategory,listCity  }) => {
   const inputFileRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [typeFile, setTypeFile] = useState('');
   const [journalist,setJournalist] = useState('');
   const [date,setDate] = useState('');
   const [type,setType] = useState('');
+  const [city,setCity] = useState('');
   const [nameFile,setNameFile] = useState('');
   const handleButtonFile = () => {
     inputFileRef.current.click();
   };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      const tipo = file.type.split("/").shift();
-      setTypeFile(tipo);
-      const reader = new FileReader();
-      reader.onload = (event) => setPreview(event.target.result);
-      reader.readAsDataURL(file);
+      const type = file.type.split("/").shift();    
+      if(type !== 'image' && type !== 'video')
+      {
+        toast.warning('SOLO SE ADMITE IMAGENES Y VIDEOS')
+      }else{
+        setTypeFile(type);
+        const reader = new FileReader();
+        reader.onload = (event) => setPreview(event.target.result);
+        reader.readAsDataURL(file);
+      }      
     }
   };
   const handleCloseImg = (e) => {
     setTypeFile('');
     setPreview(null)
   }
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = {
         journalist,
         date,
         type,
-        nameFile,
-        file:preview
+        city,
+        name:nameFile,
+        file:preview,
+        typeFile:typeFile
     }
-    console.log(formData);
+    
+    const response = await addFile(formData);
+    console.log(response);
+    // console.log(formData);
   };
-
+  
   return (
     <form onSubmit={handleSubmit}>
       <div className="row form-group">
@@ -49,14 +61,17 @@ const FormUpload = ({ handleClose, listCategory,city  }) => {
           <select name="journalist" className="form-select form-select-sm" onChange={(e)=>setJournalist(e.target.value)} value={journalist}>
             <option value="">Seleccione al periodista...</option>
             {Object.keys(listCategory).map((key) => (
-              <option value={listCategory[key].name} key={key} >{listCategory[key].name}</option>
+              <option value={listCategory[key].id} key={key} >{listCategory[key].name}</option>
             ))} 
           </select>
         </div>
         <div className="col-sm-6">
           <label htmlFor="city_origin">CIUDAD ORIGEN:</label>
-          <select name="city_origin" id="city_origin" className="form-select form-select-sm" >
-              <option value="">Seleccion la ciudad...</option>
+          <select name="city_origin" id="city_origin" value={city} onChange={(e)=>setCity(e.target.value)} className="form-select form-select-sm" >
+              <option value="">Seleccion la ciudad...</option>              
+              {Object.keys(listCity).map((key) => (
+              <option value={listCity[key].id_ciudad} key={key} >{listCity[key].nombre}</option>
+            ))} 
           </select>
         </div>
       </div>
@@ -109,7 +124,7 @@ const FormUpload = ({ handleClose, listCategory,city  }) => {
             id={`fileInput`}
             ref={inputFileRef}
             onChange={handleFileChange}
-            // value={selectedFile}
+            accept='image/*,video/*'
           ></Input>
           <Button
             variant="success"

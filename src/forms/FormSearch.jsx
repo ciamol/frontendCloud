@@ -8,7 +8,7 @@ import { filter } from "../redux/filterSlice";
 
 const FormSearch = ({city}) => {  
   const { dateNow,journalist } = useSelector((state) => state.filter);
-  const [cityFilter,setCityFilter] = useState("");
+  const [cityFilter,setCityFilter] = useState(0);
   const [dateFilter, setDateFilter] = useState(dateNow);  
   const dispatch = useDispatch();  
   const submitSearch = (e) => {

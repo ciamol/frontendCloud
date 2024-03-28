@@ -1,35 +1,49 @@
 import { Input } from "../components/Input";
 import Button from "react-bootstrap/Button";
 import { FaSearch } from "react-icons/fa";
-import { searchFile } from "../actions/file";
-import { useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import {  useState } from "react";
 
-const FormSearch = () => {
-  const [search, setSearch] = useState("");
+import { useDispatch, useSelector } from "react-redux";
+import { filter } from "../redux/filterSlice";
+
+const FormSearch = ({city}) => {  
+  const { dateNow,journalist } = useSelector((state) => state.filter);
+  const [cityFilter,setCityFilter] = useState("");
+  const [dateFilter, setDateFilter] = useState(dateNow);  
+  const dispatch = useDispatch();  
   const submitSearch = (e) => {
     e.preventDefault();
-    searchFile(search)
-      .then((response) => {
-        if (response.content.total_count <= 0) {
-          toast.warning(response.content.total_count+" ARCHIVOS ENCONTRADOS");
-        } else {
-          toast.success(response.content.total_count + " ARCHIVOS ENCONTRADOS");
-        }
-      })
-      .catch((error) => console.log(error));
+    dispatch(filter({
+      dateNow:dateFilter,
+      city:cityFilter,
+      journalist:journalist
+    }))
   };
   return (
     <form className="d-flex w-100" onSubmit={submitSearch}>
-      <ToastContainer autoClose={2000} />
-      <Input
-        type={`search`}
-        placeholder={`Buscar...`}
-        onChange={(e) => setSearch(e.target.value)}
-        value={search}
-      ></Input>
-      <Button size="sm" variant="danger" type="submit">
-        <FaSearch />
+      <Input 
+        type={`date`}      
+        value={dateFilter}
+        onChange={(e)=>setDateFilter(e.target.value)}
+      />
+      <select 
+      name="city" 
+      id="city" 
+      className="form-select form-select-sm"
+      value={cityFilter} 
+      onChange={(e)=>setCityFilter(e.target.value)} 
+      >
+        <option value="0">Seleccione el departamento...</option>
+        {city.statusCode !== 401 ? (
+          Object.keys(city).map((key) => (
+            <option value={city[key].id_ciudad} key={key}>{city[key].nombre}</option>
+          ))
+        ) : (
+          <option value="0">No se pudo cargar...</option>
+        )}
+      </select>
+      <Button size="sm" variant="danger" type="submit" className="d-flex fw-bold align-items-center">
+        <FaSearch />   BUSCAR
       </Button>
     </form>
   );

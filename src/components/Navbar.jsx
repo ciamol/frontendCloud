@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { logout } from "../actions/auth";
 import { useNavigate } from "react-router-dom";
 const NavBar = ({ title,handleShow,handleShowSideBar }) => {
-    const {id,name,rol} = useSelector((state)=>state.user)
+    const {id,name,rol} = useSelector((state)=>state.user)   
     const navigate = useNavigate();
     const handleLogout =()=>{
         logout()            
@@ -14,7 +14,7 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
     }
     return (
         <div className="w-100 position-fixed top-0 z-2" >
-        <div className='d-flex  justify-content-between pt-3 pb-3 p-3 text-white align-items-center' style={{background:"#FF9393"}}>
+        <div className='d-flex  justify-content-between pt-2 pb-2 p-2 text-white align-items-center' style={{background:"#FF9393"}}>
             <div className="d-flex ">
                 <span className="fw-bold d-none d-sm-block cursor-pointer">{title}</span>
                 <Button
@@ -26,9 +26,11 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
                     <GiHamburgerMenu size={20}/>
                 </Button>
             </div>
-            <div className="d-flex " style={{width:"40%"}}>
-                <FormSearch />
-            </div>
+            {/* <div className="d-flex " style={{width:"40%"}}>
+                <FormSearch 
+                city={city}
+                />
+            </div> */}
             <div className="d-flex gap-4 fw-bold align-items-center">
                 {rol===1 && <Button
                     onClick={handleShow}
@@ -37,9 +39,8 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
                     id="upload-file"
                     className="text-white"
                 >
-                    <span className="cursor-pointer d-flex align-items-center" 
-                  
-                    ><span className="d-none d-sm-block"> SUBIR ARCHIVO </span><IoMdCloudUpload size={30}/> </span>            
+                    <span className="cursor-pointer d-flex align-items-center"                   
+                    ><span className="d-none d-sm-block fw-bold"> SUBIR ARCHIVO </span><IoMdCloudUpload size={30}/> </span>            
                 </Button>}
                 <Button
                     variant={`outline-danger`}
@@ -47,7 +48,7 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
                     className="text-white" 
                     onClick={handleLogout}                
                 >
-                    <span className="cursor-pointer ">SALIR</span>
+                    <span className="cursor-pointer fw-bold">SALIR</span>
                 </Button>
             </div>
         </div>

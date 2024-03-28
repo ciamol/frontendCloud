@@ -1,16 +1,26 @@
 import { useState } from "react";
 import { Input } from "../components/Input";
 import { Button } from "react-bootstrap";
+import { AddJournalist,getAllJournalist } from "../actions/journalist";
 const FormsCategory = ({handleClose}) => {
     const [journalist,setJournalist] = useState('');
-    const submitCategory = (e)=>{
+    const submitCategory = async (e)=>{
         e.preventDefault();
         const formData = {
-            journalist
-        }       
+            name:journalist
+        }  
+        const response = await AddJournalist(formData);
+        if(response.ok){
+            toast.success(`¡${response.msg}!`);
+            getAllJournalist();
+            
+        }else{
+            toast.error(`¡${response.errors.name.msg}!`)
+        }
     } 
     return (
     <div>
+        {/* <ToastContainer autoClose={2000} /> */}
         <form onSubmit={submitCategory}>
             <div className="row ">
                 <div className="col-md-12">
@@ -27,10 +37,11 @@ const FormsCategory = ({handleClose}) => {
                     <Button 
                     type={`submit`}
                      className="w-100 fw-bold"
-                    >ACTUALIZAR</Button>
+                    >AGREGAR</Button>
                 </div>
                 <div className="col-md-6 ">
                     <Button 
+                    
                     onClick={handleClose}
                     variant="danger"
                        className="w-100 fw-bold"

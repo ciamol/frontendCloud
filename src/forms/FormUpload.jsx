@@ -3,7 +3,7 @@ import { Input } from "../components/Input";
 import { Button } from "react-bootstrap";
 import { FaFileImage } from "react-icons/fa";
 import { IoClose } from "react-icons/io5";
-const FormUpload = ({ handleClose, listCategory  }) => {
+const FormUpload = ({ handleClose, listCategory,city  }) => {
   const inputFileRef = useRef(null);
   const [preview, setPreview] = useState(null);
   const [typeFile, setTypeFile] = useState('');
@@ -44,7 +44,7 @@ const FormUpload = ({ handleClose, listCategory  }) => {
   return (
     <form onSubmit={handleSubmit}>
       <div className="row form-group">
-        <div className="col-sm-12">
+        <div className="col-sm-6">
           <label htmlFor="journalist">PERIODISTA:</label>
           <select name="journalist" className="form-select form-select-sm" onChange={(e)=>setJournalist(e.target.value)} value={journalist}>
             <option value="">Seleccione al periodista...</option>
@@ -53,15 +53,22 @@ const FormUpload = ({ handleClose, listCategory  }) => {
             ))} 
           </select>
         </div>
+        <div className="col-sm-6">
+          <label htmlFor="city_origin">CIUDAD ORIGEN:</label>
+          <select name="city_origin" id="city_origin" className="form-select form-select-sm" >
+              <option value="">Seleccion la ciudad...</option>
+          </select>
+        </div>
       </div>
       <div className="row form-group">
         <div className="col-sm-6">
-          <label htmlFor="date">FECHA:</label>
+          <label htmlFor="date">FECHA ELABORACION NOTA:</label>
           <Input type={`date`} name="date" onChange={(e)=>{setDate(e.target.value)}} value={date}/>
         </div>
         <div className="col-sm-6">
           <label htmlFor="type">TIPO:</label>
           <select name="type" onChange={(e) => setType(e.target.value)} value={type} className="form-select form-select-sm">
+            <option value="">SELECCIONE EL TIPO...</option>
             <option value="NOTA">NOTA</option>
             <option value="VO">VO</option>
             <option value="VTR">VTR</option>
@@ -109,7 +116,7 @@ const FormUpload = ({ handleClose, listCategory  }) => {
             className="w-100 fw-bold"
             onClick={handleButtonFile}
           >
-            SUBIR ARCHIVO
+            CARGAR ARCHIVO
             <FaFileImage />
           </Button>
         </div>
@@ -117,7 +124,7 @@ const FormUpload = ({ handleClose, listCategory  }) => {
       <div className="row mt-3">
         <div className="col-md-6">
           <Button type={`submit`} className="w-100 fw-bold">
-            ACTUALIZAR
+            SUBIR 
           </Button>
         </div>
         <div className="col-md-6 ">

@@ -4,13 +4,13 @@ import { IoClose } from "react-icons/io5";
 const SideBar = ({ title,handleShowSideBar,children }) => {
     return (
     <div
-        className="position-fixed z-3 "
+        className="position-fixed z-3"
         style={{ height: "100vh", width: "100vh" }}
     >
-        <div className="d-flex">
-            <div className="bg-danger text-white p-2" style={{height:'100vh',width:'20% '}}>
+        <div className="d-flex ">
+            <div className="bg-danger text-white p-2 overflow-auto" style={{height:'100vh',width:'20% '}}>
                 <span className="fw-bold ">{title}</span>
-                <ul className="list-group mt-4 list-category">
+                <ul className="list-group mt-4 list-category ">
                     {children}
                 </ul>
             </div>

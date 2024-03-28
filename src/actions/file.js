@@ -15,4 +15,10 @@ const downloadFile = async (data) => {
     const body = await response.json();
     return body; 
 }
-export {getFile,downloadFile,searchFile}
+const getAllFile = async (data) => {
+    const {dateNow,city,journalist} = data
+    const response = await fetchToken(`api/file/searchFile/${dateNow}/${city}/${journalist}`);
+    const body = await response.json();
+    return body;
+}
+export {getFile,downloadFile,searchFile,getAllFile}

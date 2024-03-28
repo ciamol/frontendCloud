@@ -20,7 +20,6 @@ const fetchNoToken = ( endpoint, data, method = 'GET' ) => {
 
 const fetchToken = ( endpoint, data, method = 'GET' ) => {
     const url = `${ baseUrl }/${ endpoint }`;
-    
     const token = localStorage.getItem('token') || ''
 
     if ( method === 'GET' ) {

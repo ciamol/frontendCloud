@@ -1,5 +1,5 @@
 .bg-image {
-  background-image: url('../public/TAPA.jpg');
+  background-image: url('/TAPA.jpg');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -13,4 +13,13 @@
   padding: 5px;
   font-weight: bold;
   background-color: #ff8181;
+}
+ul.option-hover>li:hover{
+  /* box-shadow: 10px 10px; */
+  padding: 10px;
+  background-color: rgb(235, 235, 235);
+} 
+.active-option{
+  padding: 10px;
+  background-color: rgb(235, 235, 235);
 }

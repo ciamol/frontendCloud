@@ -6,9 +6,10 @@ const getAllCategory = async (data) => {
   return body; 
 };
 const getContentCategory = async (data) => {
-  const response = await fetchToken(`api/category/${data}`);
+  const {dateNow,city,idCategory} = data;
+  const response = await fetchToken(`api/file/searchFile/${dateNow}/${city}/${idCategory}`)
   const body = await response.json();
-  return body; 
+  return body;
 }
 
 export { getAllCategory, getContentCategory};

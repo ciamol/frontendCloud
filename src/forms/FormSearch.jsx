@@ -17,12 +17,13 @@ const FormSearch = ({city}) => {
       dateNow:dateFilter,
       city:cityFilter,
       journalist:journalist
-    }))
+    }))    
   };
   return (
     <form className="d-flex w-100" onSubmit={submitSearch}>
       <Input 
-        type={`date`}      
+        type={`date`}   
+      
         value={dateFilter}
         onChange={(e)=>setDateFilter(e.target.value)}
       />

@@ -10,9 +10,10 @@ import FormsCategory from "../forms/FormsCategory";
 import FormUpload from "../forms/FormUpload";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllCity } from "../actions/city";
-import { getFile, downloadFile } from "../actions/file";
+import { getAllFile } from "../actions/file";
+import { getFile, getURLDownloadFile } from "../actions/file";
 import VideoTable from "../tables/VideoTable";
-import { ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 import { getAllJournalist } from "../actions/journalist";
 import { filter } from "../redux/filterSlice";
 const Home = () => {
@@ -20,8 +21,10 @@ const Home = () => {
   const [showUpload, setShowUpload] = useState(false);
   const [displaySideBar, setDisplaySideBar] = useState(false);
   const { id, name, rol } = useSelector((state) => state.user);
-  const { dateNow, city } = useSelector((state) => state.filter);
+  const filters = useSelector((state) => state.filter);
+ 
   const [listCategory, setListCategory] = useState([]);
+  const [listFile, setListFile] = useState([]);
   const [listCity, setListCity] = useState([]);
   const [fileContent, setFileContent] = useState("");
   const [fileInfo, setFileInfo] = useState({
@@ -53,8 +56,8 @@ const Home = () => {
     const idCategory = category.getAttribute("data-id");
     dispatch(
       filter({
-        dateNow: dateNow,
-        city: city,
+        dateNow: filters.dateNow,
+        city: filters.city,
         journalist: idCategory,
       })
     );
@@ -63,24 +66,57 @@ const Home = () => {
   const handleContentFile = (e) => {
     const idFile = e.target.closest("tr").id;
     const titleFile = e.target.closest("tr").querySelector("td:nth-child(2)").textContent;
+    const isDowload = !!e.target.closest("button")?.getAttribute('id')       
+     
     getFile(idFile)
       .then((response) => {
-        setFileContent(response.content);
-      })
-      .catch((error) => console.log(error));
-    downloadFile(idFile)
-      .then((response) => {
+        !!response.content? setFileContent(response.content) : toast.error(`Archivo no encontrado :c`);
         setFileInfo({
-          urlFile: response.url,
-          titleFile: titleFile,
-        });
+          titleFile:titleFile
+        })
       })
-      .catch((error) => console.log(error));
+    .catch((error) => {
+      toast.error(`Ocurrio un error`)  
+      console.log(error);
+    });   
+    if(isDowload){
+      const loadingToast = toast.loading('Alistando el archivo',{autoClose:false})
+      getURLDownloadFile(idFile)
+      .then((response)=>{
+        if(!response.ok)
+        {
+          toast.error(`Error al descargar el archivo`);
+          throw new Error('Error al descargar el archivo')
+        }
+        return response.blob();
+      })
+      .then(blob=>{
+        toast.dismiss(loadingToast);
+        const url = window.URL.createObjectURL(blob);
+        // Crea un enlace temporal para descargar el archivo
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = titleFile; // Nombre del archivo
+        a.click();
+        window.URL.revokeObjectURL(url);
+        toast.success(`¡Se descargo correctamente!`);
+      })
+      .catch(error=>{
+        toast.dismiss(loadingToast);
+        console.log(error);
+        toast.error('Ocurrio un error')
+      })
+    }
+
   };
-  const handleDownload = (e) => {
-    const urlFile = e.target.closest("button").getAttribute("data-url");
-    window.open(urlFile);
-  };  
+  const loadFile = async() => {
+      try{
+        const response = await getAllFile(filters);
+        setListFile(response.files);
+      }catch(error){
+        console.log(error);
+      }
+  } 
   const loadJournaList = async() => {
     try{
       const response = await getAllJournalist()
@@ -90,11 +126,15 @@ const Home = () => {
       console.log(error);
     }
   }
+  useEffect(()=>{
+    loadFile();
+  },[filters])
   useEffect(() => {        
     getAllCity()
       .then((result) => setListCity(result))
       .catch((error) => console.log(error));
     loadJournaList();
+    
   }, []);
 
   return (
@@ -115,7 +155,7 @@ const Home = () => {
           show={showUpload}
           handleClose={handleClose}
         >
-          <FormUpload listCategory={listCategory} listCity={listCity} handleClose={handleClose} />
+          <FormUpload listCategory={listCategory} listCity={listCity} handleClose={handleClose} loadFile={loadFile}/>
         </ModalShow>
       )}
       <NavBar
@@ -196,7 +236,7 @@ const Home = () => {
                 <div className="fw-bold">
                   <span className="text-white">{fileInfo.titleFile}</span>
                 </div>
-                <div className="fw-bold text-white cursor-pointer">
+                {/* <div className="fw-bold text-white cursor-pointer">
                   <Button
                     variant="danger"
                     data-url={fileInfo.urlFile}
@@ -206,16 +246,19 @@ const Home = () => {
                     <span>DESCARGAR</span>
                     <FaCloudDownloadAlt size={25} />
                   </Button>
-                </div>
+                </div> */}
               </div>
-              <div className="h-50 bg-dark">
+              <div className=" bg-dark" style={{height:"65%"}}>
                 <iframe
+                  // frameBorder="0"
+                  width="300"
+                  height="100%"
+                  
                   src={fileContent}
-                  frameBorder="0"
-                  style={{ width: "100%", height: "100%" }}
+                  style={{ width: "100%",border: "1px solid black" }}
                 ></iframe>
               </div>
-              <VideoTable city={listCity} handleContentFile={handleContentFile}/>
+              <VideoTable city={listCity} handleContentFile={handleContentFile} listFile={listFile}/>
             </div>
           </div>
         </div>

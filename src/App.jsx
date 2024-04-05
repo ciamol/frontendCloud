@@ -3,6 +3,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import NotFound from './pages/NotFound';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import './App.css'
 import { useDispatch, useSelector } from 'react-redux';
@@ -24,8 +25,9 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route exact path="/Login" element={isLoading?(<div>CARGANDO....</div> ):(!!userAuth.id?(<Navigate to={'/'} />):( <Login />))} />
-        <Route exact path="/" element={isLoading?(<div>CARGANDO...</div>):(!!userAuth.id? (<Home />):(<Navigate to={'/login'} />))} />
+        <Route path="/login" element={isLoading?(<div>CARGANDO....</div> ):(!!userAuth.id?(<Navigate to="/" />):( <Login />))} />
+        <Route path="/" element={isLoading?(<div>CARGANDO...</div>):(!!userAuth.id? (<Home />):(<Navigate to="/login" />))} />
+        <Route path="*" element={<NotFound />}></Route>
       </Routes>
     </Router>
   )

@@ -6,16 +6,18 @@ import { getAllFile } from "../actions/file";
 import { useSelector } from "react-redux";
 import FormSearch from "../forms/FormSearch";
 import { toast } from "react-toastify";
-const VideoTable = ({city,handleContentFile}) => {
-  const [dataTable, setDataTable] = useState([]);  
-  const filter  = useSelector((state) => state.filter);
+const VideoTable = ({city,handleContentFile,listFile}) => {
+ 
+  // console.log(listFile)
   const [search, setSearch] = useState("");
-  useEffect(()=>{  
-    getAllFile(filter)
-    .then((response) => {response.ok? setDataTable(response.files):toast.error(response.msg)})
-    .catch((error) => console.log(error));    
-  },[filter])
-  const filteredData = dataTable.filter((video) =>
+  // useEffect(()=>{  
+  //   console.log(listFile)
+  //   setDataTable(listFile)
+  //   // getAllFile(filter)
+  //   // .then((response) => {response.ok? setDataTable(response.files):toast.error(response.msg)})
+  //   // .catch((error) => console.log(error));    
+  // },[])
+  const filteredData = listFile.filter((video) =>
   video.nombre.toLowerCase().includes(search.toLowerCase())
 );
   const handleSearchChange = (e) => {
@@ -23,23 +25,24 @@ const VideoTable = ({city,handleContentFile}) => {
   };  
   return (
     <div>
-      <div className="d-flex justify-content-between p-2" style={{backgroundColor:'#ea868f'}}>
+      <div className="d-flex justify-content-between flex-wrap p-2" style={{backgroundColor:'#ea868f'}}>
         <div>
           <FormSearch 
             city={city}
           />
         </div>
-        <div style={{ width: "30%" }}>
+        <div  style={{ width: "30%" }}>
           <Input
-            placeholder="Buscar..."
+            placeholder="BUSCAR EL NOMBRE ..."
             type="search"
             value={search}
             onChange={handleSearchChange}
           />
         </div>
       </div>
+      <div className="table-responsive">
       <table className="table  table-sm mb-0 table-hover">
-        <thead className="bg-dark">
+        <thead className="table-primary">
           <tr>
             <th>NRO</th>
             <th>NOMBRE</th>
@@ -61,7 +64,7 @@ const VideoTable = ({city,handleContentFile}) => {
               <td>{video.nom_tipo}</td>
               <td>{video.fecha_elaboracion? video.fecha_elaboracion.split('T')[0]:'' }</td>
               <td>
-                <Button variant="outline-success" size="sm" className="w-100"
+                <Button variant="outline-success" size="sm" className="w-100" 
                  id="download"
                  >
                   <IoMdCloudDownload size={25} />
@@ -71,23 +74,20 @@ const VideoTable = ({city,handleContentFile}) => {
           ))}
         </tbody>
       </table>
-      <nav aria-label="Page navigation example ">
+      </div>
+
+      {/* <nav aria-label="Page navigation example ">
         <ul className="pagination justify-content-end">
           <li className="page-item disabled">
             <a className="page-link">ANTERIOR</a>
-          </li>
-          <li className="page-item">
-            <a className="page-link" href="#">
-              1
-            </a>
-          </li>       
+          </li>             
           <li className="page-item">
             <a className="page-link" href="#">
               SIGUIENTE
             </a>
           </li>
         </ul>
-      </nav>
+      </nav> */}
     </div>
   );
 };

@@ -3,8 +3,6 @@ import SideBar from "../components/SideBar";
 import Footer from "../components/Footer";
 import Options from "../components/Options";
 import ModalShow from "../components/Modal";
-import { Button } from "react-bootstrap";
-import { FaCloudDownloadAlt } from "react-icons/fa";
 import { useEffect, useState } from "react";
 import FormsCategory from "../forms/FormsCategory";
 import FormUpload from "../forms/FormUpload";
@@ -20,9 +18,8 @@ const Home = () => {
   const [show, setShow] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
   const [displaySideBar, setDisplaySideBar] = useState(false);
-  const { id, name, rol } = useSelector((state) => state.user);
+  const { rol } = useSelector((state) => state.user);
   const filters = useSelector((state) => state.filter);
- 
   const [listCategory, setListCategory] = useState([]);
   const [listFile, setListFile] = useState([]);
   const [listCity, setListCity] = useState([]);
@@ -49,6 +46,10 @@ const Home = () => {
   };
   const handleContentCategory = (e) => {
     const items = e.target.closest("ul").querySelectorAll("li");
+    if(displaySideBar)
+    {
+      setDisplaySideBar(!displaySideBar);
+    }
     items.forEach((element) => {
       element.classList.remove("active-option");
     });
@@ -65,49 +66,48 @@ const Home = () => {
   };
   const handleContentFile = (e) => {
     const idFile = e.target.closest("tr").id;
-    const titleFile = e.target.closest("tr").querySelector("td:nth-child(2)").textContent;
+    const titleFile = e.target.closest("tr").querySelector("td:nth-child(1)").textContent;
     const isDowload = !!e.target.closest("button")?.getAttribute('id')       
-     
-    getFile(idFile)
-      .then((response) => {
-        !!response.content? setFileContent(response.content) : toast.error(`Archivo no encontrado :c`);
-        setFileInfo({
-          titleFile:titleFile
+    if(titleFile !== fileInfo.titleFile){
+      getFile(idFile)
+        .then((response) => {
+          !!response.content? setFileContent(response.content) : toast.error(`Archivo no encontrado :c`);
+          setFileInfo({
+            titleFile:titleFile
+          })
         })
-      })
-    .catch((error) => {
-      toast.error(`Ocurrio un error`)  
-      console.log(error);
-    });   
-    if(isDowload){
-      const loadingToast = toast.loading('Alistando el archivo',{autoClose:false})
-      getURLDownloadFile(idFile)
-      .then((response)=>{
-        if(!response.ok)
-        {
-          toast.error(`Error al descargar el archivo`);
-          throw new Error('Error al descargar el archivo')
-        }
-        return response.blob();
-      })
-      .then(blob=>{
-        toast.dismiss(loadingToast);
-        const url = window.URL.createObjectURL(blob);
-        // Crea un enlace temporal para descargar el archivo
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = titleFile; // Nombre del archivo
-        a.click();
-        window.URL.revokeObjectURL(url);
-        toast.success(`¡Se descargo correctamente!`);
-      })
-      .catch(error=>{
-        toast.dismiss(loadingToast);
+      .catch((error) => {
+        // toast.error(`Ocurrio un error`)  
         console.log(error);
-        toast.error('Ocurrio un error')
-      })
+      });   
     }
-
+      if(isDowload){
+        const loadingToast = toast.loading(`¡Descargando! ${titleFile}`,{autoClose:false})
+        getURLDownloadFile(idFile)
+        .then((response)=>{
+          if(!response.ok)
+          {
+            toast.error(`Error al descargar el archivo`);
+            throw new Error('Error al descargar el archivo')
+          }
+          return response.blob();
+        })
+        .then(blob=>{
+          toast.dismiss(loadingToast);
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = titleFile; 
+          a.click();
+          window.URL.revokeObjectURL(url);
+          toast.success(`¡Se descargo correctamente!`);
+        })
+        .catch(error=>{
+          toast.dismiss(loadingToast);
+          console.log(error);
+          // toast.error('Ocurrio un error')
+        })
+      }  
   };
   const loadFile = async() => {
       try{
@@ -136,7 +136,6 @@ const Home = () => {
     loadJournaList();
     
   }, []);
-
   return (
     <div className="">
       <ToastContainer autoClose={2000} />
@@ -202,7 +201,7 @@ const Home = () => {
         >
           <div className="d-flex justify-content-between h-100 ">
             <div
-              className="h-100 overflow-auto p-2 d-none d-sm-block"
+              className="h-100 overflow-auto d-none d-sm-block"
               style={{ width: "20%" }}
             >
               <Options
@@ -235,25 +234,12 @@ const Home = () => {
               <div className="d-flex justify-content-between align-items-center bg-danger p-1  top-0">
                 <div className="fw-bold">
                   <span className="text-white">{fileInfo.titleFile}</span>
-                </div>
-                {/* <div className="fw-bold text-white cursor-pointer">
-                  <Button
-                    variant="danger"
-                    data-url={fileInfo.urlFile}
-                    title={`DESCARGAR ${fileInfo.titleFile}`}
-                    onClick={handleDownload}
-                  >
-                    <span>DESCARGAR</span>
-                    <FaCloudDownloadAlt size={25} />
-                  </Button>
-                </div> */}
+                </div>    
               </div>
               <div className=" bg-dark" style={{height:"65%"}}>
                 <iframe
-                  // frameBorder="0"
                   width="300"
-                  height="100%"
-                  
+                  height="100%"                  
                   src={fileContent}
                   style={{ width: "100%",border: "1px solid black" }}
                 ></iframe>

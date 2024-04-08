@@ -3,7 +3,7 @@ import { Button } from "react-bootstrap";
 import { useSelector } from "react-redux";
 
 const Options = ({ handleShow, handleContentCategory,children }) => {
-  const { id, name, rol } = useSelector((state) => state.user);
+  const { rol } = useSelector((state) => state.user);
   return (
     <div className="w-100">
       <ul className="list-group option-hover">
@@ -13,7 +13,7 @@ const Options = ({ handleShow, handleContentCategory,children }) => {
               variant="secondary"
               onClick={handleShow}
               id="category"
-              className="p-2"
+              className="p-2 rounded-0"
               style={{ width: "100%", height: "100%" }}
             >
               <FaPlus size={30} />

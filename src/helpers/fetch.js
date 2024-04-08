@@ -1,5 +1,5 @@
-const baseUrl = 'http://192.168.233.134:4500'
-// const baseUrl = 'http://127.0.0.1:4500'
+// const baseUrl = 'http://192.168.233.134:4500'
+const baseUrl = 'http://127.0.0.1:4500'
 const fetchNoToken = ( endpoint, data, method = 'GET' ) => {
     const url = `${ baseUrl }/${ endpoint }`;    
     if ( method === 'GET' ) {

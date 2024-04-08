@@ -1,25 +1,34 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Input } from "../components/Input";
 import { IoMdCloudDownload } from "react-icons/io";
+import { FaRegEdit } from "react-icons/fa";
 import { Button } from "react-bootstrap";
-import { getAllFile } from "../actions/file";
-import { useSelector } from "react-redux";
 import FormSearch from "../forms/FormSearch";
-import { toast } from "react-toastify";
 const VideoTable = ({city,handleContentFile,listFile}) => {
- 
-  // console.log(listFile)
   const [search, setSearch] = useState("");
-  // useEffect(()=>{  
-  //   console.log(listFile)
-  //   setDataTable(listFile)
-  //   // getAllFile(filter)
-  //   // .then((response) => {response.ok? setDataTable(response.files):toast.error(response.msg)})
-  //   // .catch((error) => console.log(error));    
-  // },[])
+  const [next,setNext] = useState(5);
+  const [prev,setPrev] = useState(0);
   const filteredData = listFile.filter((video) =>
-  video.nombre.toLowerCase().includes(search.toLowerCase())
-);
+    video.nombre.toLowerCase().includes(search.toLowerCase())
+  );
+  const pagination = () =>{
+    return filteredData.slice(prev,next);
+  }
+  const nextPagination = ()=>{    
+    if(next < listFile.length)
+    {
+      setNext(next+5);
+      setPrev(prev+5)    
+    }
+  }
+  const prevPagination = () => {
+ 
+    if(prev >0)
+    {
+      setNext(next-5);
+      setPrev(prev-5);
+    }
+  }
   const handleSearchChange = (e) => {
     setSearch(e.target.value);
   };  
@@ -43,29 +52,37 @@ const VideoTable = ({city,handleContentFile,listFile}) => {
       <div className="table-responsive">
       <table className="table  table-sm mb-0 table-hover">
         <thead className="table-primary">
-          <tr>
-            <th>NRO</th>
+          <tr>          
             <th>NOMBRE</th>
             <th>PERIODISTA</th>
             <th>CIUDAD</th>
             <th>TIPO</th>
             <th>FECHA ELABORACION</th>
-            <th>DESCARGAR</th>
+            <th>ACCIONES</th>
           </tr>
         </thead>
         <tbody>
-          {filteredData.map((video, index) => (
+          {pagination().map((video, index) => (
             <tr key={index} className="cursor-pointer" id={video.id_archivo} onClick={handleContentFile}
-            >
-              <td>{index+1}</td>
+            >         
               <td>{video.nombre}</td>
               <td>{video.nom_periodista}</td>
               <td>{video.nom_ciudad}</td>
               <td>{video.nom_tipo}</td>
               <td>{video.fecha_elaboracion? video.fecha_elaboracion.split('T')[0]:'' }</td>
               <td>
-                <Button variant="outline-success" size="sm" className="w-100" 
+                {/* <Button 
+                  variant="outline-primary" 
+                  size="sm" 
+                 id="edit"
+                 title="EDITAR"
+                 >
+                  <FaRegEdit size={20} />
+                </Button> */}
+                <Button variant="outline-success" size="sm" 
                  id="download"
+                 className="w-100"
+                 title="DESCARGAR"
                  >
                   <IoMdCloudDownload size={25} />
                 </Button>
@@ -75,19 +92,17 @@ const VideoTable = ({city,handleContentFile,listFile}) => {
         </tbody>
       </table>
       </div>
-
-      {/* <nav aria-label="Page navigation example ">
-        <ul className="pagination justify-content-end">
-          <li className="page-item disabled">
-            <a className="page-link">ANTERIOR</a>
+      <nav aria-label="Page-navigation" className="d-flex justify-content-between align-items-center">
+        <h5 className="fw-bold">TOTAL {listFile.length} ARCHIVOS ENCONTRADOS</h5>
+        <ul className="pagination justify-content-end gap-2 mt-2">
+          <li className="page-item ">
+            <Button variant="secondary" onClick={prevPagination}>ANTERIOR</Button>
           </li>             
           <li className="page-item">
-            <a className="page-link" href="#">
-              SIGUIENTE
-            </a>
+            <Button variant="secondary" onClick={nextPagination}>SIGUIENTE</Button>        
           </li>
         </ul>
-      </nav> */}
+      </nav>
     </div>
   );
 };

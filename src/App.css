@@ -15,11 +15,26 @@
   background-color: #ff8181;
 }
 ul.option-hover>li:hover{
-  /* box-shadow: 10px 10px; */
-  padding: 10px;
+  /* padding: 10px; */
   background-color: rgb(235, 235, 235);
 } 
 .active-option{
   padding: 10px;
   background-color: rgb(235, 235, 235);
+}
+::-webkit-scrollbar {
+  width: 10px; 
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1; 
+}
+::-webkit-scrollbar-thumb {
+  background: #888; 
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555; 
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1; 
 }

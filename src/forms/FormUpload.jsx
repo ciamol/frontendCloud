@@ -10,8 +10,10 @@ const FormUpload = ({ handleClose, listCategory, listCity,loadFile }) => {
   const [preview, setPreview] = useState(null);
   const [typeFile, setTypeFile] = useState("");
   const [journalist, setJournalist] = useState("");
+  const [journalistName, setJournalistName] = useState("");
   const [date, setDate] = useState("");
   const [type, setType] = useState("");
+  const [typeName,setTypeName] = useState("");
   const [city, setCity] = useState("");
   const [nameFile, setNameFile] = useState("");
   const handleButtonFile = () => {
@@ -48,13 +50,16 @@ const FormUpload = ({ handleClose, listCategory, listCity,loadFile }) => {
     e.preventDefault();
     const formData = {
       journalist,
+      journalistName,
       date,
-      type,
+      type,      
+      typeName,
       city,
       name: nameFile,
       file: preview,
       typeFile: typeFile,
     };
+    // console.log(formData);  
     if(validationForm(formData) ){
       try {
         const loadingToast = toast.loading('Subiendo Archivo',{autoClose:false})        
@@ -93,7 +98,10 @@ const FormUpload = ({ handleClose, listCategory, listCity,loadFile }) => {
           <select
             name="journalist"
             className="form-select form-select-sm"
-            onChange={(e) => setJournalist(e.target.value)}
+            onChange={(e) => {
+              setJournalist(e.target.value);
+              setJournalistName(e.target.selectedOptions[0].textContent);
+            }}
             value={journalist}
           >
             <option value="">Seleccione al periodista...</option>
@@ -138,7 +146,10 @@ const FormUpload = ({ handleClose, listCategory, listCity,loadFile }) => {
           <label htmlFor="type">TIPO:</label>
           <select
             name="type"
-            onChange={(e) => setType(e.target.value)}
+            onChange={(e) => {
+              setType(e.target.value);
+              setTypeName(e.target.selectedOptions[0].textContent);
+            }}
             value={type}
             className="form-select form-select-sm"
           >

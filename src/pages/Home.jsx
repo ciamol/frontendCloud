@@ -14,15 +14,19 @@ import VideoTable from "../tables/VideoTable";
 import { ToastContainer, toast } from "react-toastify";
 import { getAllJournalist } from "../actions/journalist";
 import { filter } from "../redux/filterSlice";
+import { TiCancel } from "react-icons/ti";
+
 const Home = () => {
   const [show, setShow] = useState(false);
   const [showUpload, setShowUpload] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);
   const [displaySideBar, setDisplaySideBar] = useState(false);
   const { rol } = useSelector((state) => state.user);
   const filters = useSelector((state) => state.filter);
   const [listCategory, setListCategory] = useState([]);
   const [listFile, setListFile] = useState([]);
   const [listCity, setListCity] = useState([]);
+  const [history, setHistory] = useState({});
   const [fileContent, setFileContent] = useState("");
   const [fileInfo, setFileInfo] = useState({
     urlFile: "",
@@ -35,6 +39,7 @@ const Home = () => {
   const handleClose = () => {
     setShow(false);
     setShowUpload(false);
+    setShowHistory(false);
   };
   const handleShow = (e) => {
     const id = e.target.closest("button").getAttribute("id");
@@ -42,6 +47,8 @@ const Home = () => {
       setShow(true);
     } else if (id === "upload-file") {
       setShowUpload(true);
+    } else if (id === "history") {
+      setShowHistory(true);
     }
   };
   const handleContentCategory = (e) => {
@@ -64,6 +71,7 @@ const Home = () => {
     );
     category.classList.add("active-option");
   };
+  
   const handleContentFile = (e) => {
     const idFile = e.target.closest("tr").id;
     const titleFile = e.target.closest("tr").querySelector("td:nth-child(1)").textContent;
@@ -81,34 +89,80 @@ const Home = () => {
         console.log(error);
       });   
     }
-      if(isDowload){
-        const loadingToast = toast.loading(`¡Descargando! ${titleFile}`,{autoClose:false})
-        getURLDownloadFile(idFile)
-        .then((response)=>{
-          if(!response.ok)
-          {
-            toast.error(`Error al descargar el archivo`);
-            throw new Error('Error al descargar el archivo')
-          }
-          return response.blob();
-        })
-        .then(blob=>{
-          toast.dismiss(loadingToast);
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = titleFile; 
-          a.click();
-          window.URL.revokeObjectURL(url);
-          toast.success(`¡Se descargo correctamente!`);
-        })
-        .catch(error=>{
-          toast.dismiss(loadingToast);
-          console.log(error);
-          // toast.error('Ocurrio un error')
-        })
+      if(isDowload){       
+        const cancelIcon = <TiCancel />;
+        console.log(cancelIcon)
+        e.target.closest("button").setAttribute('id','cancelar');
+        e.target.closest("button").setAttribute('title','CANCELAR');
+        e.target.closest("button").classList.remove('btn-outline-success')
+        e.target.closest("button").classList.add('btn-outline-info')
+        e.target.closest("button").innerHTML= cancelIcon;
+        downloadFile(titleFile,idFile)
       }  
   };
+  
+  const downloadFile = (titleFile,idFile)=>{
+    
+    const loadingToast = toast.info(`¡Descargando! ${titleFile}`);    
+    setHistory(prevData=>({
+      ...prevData,
+      [idFile]:{
+        titleFile,
+        state:"Descargando",
+        ok:3            
+      }
+    }))
+    
+    getURLDownloadFile(idFile)
+    .then((response)=>{
+      
+      if(!response.ok)
+      {
+        setHistory(prevData=>({
+          ...prevData,
+          [idFile]:{
+            titleFile,
+            state:"Fallo", 
+            ok:2           
+          }
+        }))
+        toast.error(`Error al descargar el archivo`);
+        throw new Error('Error al descargar el archivo')
+      }
+      return response.blob();
+    })
+    .then(blob=>{
+      toast.dismiss(loadingToast);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = titleFile; 
+      a.click();
+      window.URL.revokeObjectURL(url);
+      setHistory(prevData=>({
+        ...prevData,
+        [idFile]:{
+          titleFile,
+          state:"Descargado",
+          ok:1
+        }
+      }))
+      toast.success(`¡Se descargo correctamente!`);
+    })
+    .catch(error=>{
+      setHistory(prevData=>({
+        ...prevData,
+        [idFile]:{
+          titleFile,
+          state:"Fallo",
+          ok:2
+        }
+      }))
+      toast.dismiss(loadingToast);
+      console.log(error);
+      // toast.error('Ocurrio un error')
+    })
+  }
   const loadFile = async() => {
       try{
         const response = await getAllFile(filters);
@@ -157,6 +211,37 @@ const Home = () => {
           <FormUpload listCategory={listCategory} listCity={listCity} handleClose={handleClose} loadFile={loadFile}/>
         </ModalShow>
       )}
+        <ModalShow 
+          title={`HISTORIAL`}
+          show={showHistory}
+          handleClose={handleClose}
+          >
+          <table className="table table-sm table-dark">
+            <thead>
+              <tr>
+                <th>
+                  NOMBRE
+                </th>
+                <th>
+                  ESTADO
+                </th>
+              </tr>
+            </thead>
+          {
+             Object.keys(history).map((key) => (
+              <tr
+              className={`text-black ${history[key].ok === 3 ? 'bg-primary' : history[key].ok === 1 ? 'bg-success' : 'bg-danger'}`}
+              key={key}
+                data-id={key}
+                id="state"
+              >
+                <td>{history[key].titleFile}</td>
+                <td>{history[key].state}</td>
+              </tr>
+            ))
+            }
+          </table>
+        </ModalShow>
       <NavBar
         title={`BOLIVISION`}
         handleShow={handleShow}

@@ -4,10 +4,9 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { IoMdCloudUpload } from "react-icons/io";
 import { useSelector } from "react-redux";
 import { logout } from "../actions/auth";
-import { useNavigate } from "react-router-dom";
+import { TbHistoryToggle } from "react-icons/tb";
 const NavBar = ({ title,handleShow,handleShowSideBar }) => {
-    const {id,name,rol} = useSelector((state)=>state.user)   
-    const navigate = useNavigate();
+    const {rol} = useSelector((state)=>state.user)   
     const handleLogout =()=>{
         logout()            
         window.location.reload();        
@@ -27,6 +26,15 @@ const NavBar = ({ title,handleShow,handleShowSideBar }) => {
                 </Button>
             </div>
             <div className="d-flex gap-4 fw-bold align-items-center">
+                <Button
+                    variant={`outline-danger`}
+                    size="sm"   
+                    id="history"
+                    className="text-white fw-bold" title="HISTORIAL"
+                    onClick={handleShow}                
+                >
+                    <TbHistoryToggle size={30}/>
+                </Button>
                 {rol===1 && <Button
                     onClick={handleShow}
                     variant={`outline-danger`}

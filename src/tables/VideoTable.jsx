@@ -22,7 +22,6 @@ const VideoTable = ({city,handleContentFile,listFile}) => {
     }
   }
   const prevPagination = () => {
- 
     if(prev >0)
     {
       setNext(next-5);
